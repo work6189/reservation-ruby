@@ -1,0 +1,21 @@
+version: '1.0'
+
+services:
+  api:
+    build: .
+    container_name: ruby-on-rails
+    environment:
+      PORT: 3000
+      RAILS_MASTER_KEY: b6f784885ce193445c8ea0e0ad4312d4
+    ports:
+      - '3000:3000'
+    restart: "no"
+  db:
+    image: postgres:16.3
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
