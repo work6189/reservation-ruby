@@ -36,7 +36,6 @@ RUN bundle exec bootsnap precompile app/ lib/
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-
 # Final stage for app image
 FROM base
 
@@ -54,9 +53,18 @@ RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp config
 USER rails:rails
 
+# 번들 설치
+#RUN bundle install
+#RUN bundle update rake
+#RUN bundle exec rails secret
+
+# 데이터베이스 초기화 및 마이그레이션
+#RUN bundle exec rake db:setup
+
 # Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+#ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+#CMD ["./bin/rails", "server"]
+CMD ["/bin/bash"]

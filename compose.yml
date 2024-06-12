@@ -1,21 +1,49 @@
 version: '1.0'
 
+networks:
+  reservation-network: 
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
 services:
+  
   api:
-    build: .
+    build: .  # Dockerfile로 빌드
     container_name: ruby-on-rails
     environment:
       PORT: 3000
-      RAILS_MASTER_KEY: b6f784885ce193445c8ea0e0ad4312d4
+      SECRET_KEY_BASE: b6f784885ce193445c8ea0e0ad4312d4
+      DATABASE_HOST: db
+      DATABASE_USER: res
+      DATABASE_PASSWORD: postgres_pw
+      DATABASE_NAME: Reservation
+      DATABASE_PORT: "5432"
     ports:
       - '3000:3000'
     restart: "no"
+    depends_on:
+      - db
+    volumes: # 삭제 필요
+      - .:/rails
+    networks:
+      reservation-network:
+        ipv4_address: 192.168.56.10
+  
   db:
     image: postgres:16.3
     container_name: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: res
+      POSTGRES_PASSWORD: postgres_pw
+      POSTGRES_DB: Reservation
+    networks:
+      reservation-network:
+        ipv4_address: 192.168.56.101
+
+volumes:
+  postgres_data:
